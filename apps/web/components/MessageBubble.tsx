@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import type { ChatMessage } from '@/lib/types';
 import MediaMessage from './MediaMessage';
 
-function time(value: number) { return new Intl.DateTimeFormat('fa-IR', { hour: '2-digit', minute: '2-digit' }).format(value); }
+const timeFormatter = new Intl.DateTimeFormat('fa-IR', { hour: '2-digit', minute: '2-digit' });
+function time(value: number) { return timeFormatter.format(value); }
 
-export default function MessageBubble({ message, own, onReply, onEdit, onDelete, onHeart, onRetry }: {
+function MessageBubble({ message, own, onReply, onEdit, onDelete, onHeart, onRetry }: {
   message: ChatMessage; own: boolean;
   onReply: (m: ChatMessage) => void; onEdit: (m: ChatMessage) => void; onDelete: (m: ChatMessage) => void;
   onHeart: (m: ChatMessage) => void; onRetry: (m: ChatMessage) => void;
@@ -38,3 +39,7 @@ export default function MessageBubble({ message, own, onReply, onEdit, onDelete,
     </div>
   </article>;
 }
+
+export default memo(MessageBubble, (previous, next) =>
+  previous.message === next.message && previous.own === next.own
+);
