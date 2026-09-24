@@ -107,7 +107,6 @@ button, label { -webkit-tap-highlight-color: transparent; }
 .connection-pill.offline { color: var(--danger); }
 
 .status-stack { min-height: 0; position: relative; z-index: 10; }
-.status-stack:empty { display: none; }
 .error-banner, .offline-banner { z-index: 6; margin: 8px 12px 0; padding: 9px 12px; border-radius: 12px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .error-banner { background: rgba(165, 30, 63, .13); border: 1px solid rgba(165, 30, 63, .2); color: var(--danger); }
 .error-banner button { border: 0; background: transparent; cursor: pointer; font-size: 18px; }
