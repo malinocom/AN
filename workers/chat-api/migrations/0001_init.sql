@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS users (
   username TEXT NOT NULL UNIQUE CHECK (username IN ('Amir', 'Nazi')),
   password_hash TEXT NOT NULL,
   password_salt TEXT NOT NULL,
-  password_iterations INTEGER NOT NULL DEFAULT 600000,
+  password_iterations INTEGER NOT NULL DEFAULT 0,
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL,
   last_seen_at INTEGER
@@ -93,10 +93,10 @@ CREATE TABLE IF NOT EXISTS audit_events (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- Initial credentials are PBKDF2-SHA256 hashes (600,000 iterations), never plaintext.
+-- Initial credentials use a lightweight salted SHA-256 hash for Workers Free, never plaintext.
 -- Re-applying this migration does not overwrite changed passwords or delete data.
 INSERT OR IGNORE INTO users
   (id, username, password_hash, password_salt, password_iterations, created_at, updated_at)
 VALUES
-  ('user_amir', 'Amir', 'TSmM28t9mI4kYm74ejVJQMvZM5sbOXVXy8wxb11aKQ0', 'fB9XiJ_j4V2O2WvIUQMpWQ', 600000, unixepoch() * 1000, unixepoch() * 1000),
-  ('user_nazi', 'Nazi', '3w9cLQV4ZfHMsWqNJbLshGDL0iV_U7WS2zI4WDnyBio', 'I92XB30FwyWlR42Ta-1SpQ', 600000, unixepoch() * 1000, unixepoch() * 1000);
+  ('user_amir', 'Amir', 'Z2iXvrROPSb7zo4-kFGM0UWDSbYQ6f5loumREcDuiuU', 'fB9XiJ_j4V2O2WvIUQMpWQ', 0, unixepoch() * 1000, unixepoch() * 1000),
+  ('user_nazi', 'Nazi', 'CPDOhHE-br4mf0M_LIQl1NivWpGbPKB9D5Rbp58p--c', 'I92XB30FwyWlR42Ta-1SpQ', 0, unixepoch() * 1000, unixepoch() * 1000);
