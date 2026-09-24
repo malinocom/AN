@@ -1,0 +1,24 @@
+{
+  "name": "amir-nazi-private-chat",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": ["apps/web", "workers/chat-api"],
+  "scripts": {
+    "dev:web": "npm --workspace apps/web run dev",
+    "build:web": "npm --workspace apps/web run build",
+    "lint:web": "npm --workspace apps/web run lint",
+    "typecheck:web": "npm --workspace apps/web run typecheck",
+    "dev:worker": "wrangler dev",
+    "deploy:worker": "wrangler deploy",
+    "cf:types": "wrangler types workers/chat-api/worker-configuration.d.ts",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "check": "npm run typecheck:web && npm --workspace workers/chat-api run typecheck"
+  },
+  "devDependencies": {
+    "wrangler": "^4.116.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

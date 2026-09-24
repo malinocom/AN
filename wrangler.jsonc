@@ -1,0 +1,42 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "amir-nazi-chat-api",
+  "main": "workers/chat-api/src/index.ts",
+  "compatibility_date": "2026-09-01",
+  "migrations_dir": "workers/chat-api/migrations",
+  "observability": { "enabled": false },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "amir-nazi-chat-db",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA_BUCKET",
+      "bucket_name": "amir-nazi-private-media"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "CHAT_ROOM",
+        "class_name": "ChatRoom"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["ChatRoom"]
+    }
+  ],
+  "triggers": {
+    "crons": ["17 3 * * *"]
+  },
+  "vars": {
+    "ALLOWED_ORIGIN": "https://YOUR_VERCEL_OR_CUSTOM_DOMAIN",
+    "COOKIE_SAME_SITE": "None"
+  }
+}
