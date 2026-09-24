@@ -3,21 +3,20 @@
   "name": "amir-nazi-chat-api",
   "main": "workers/chat-api/src/index.ts",
   "compatibility_date": "2026-09-01",
-  "migrations_dir": "workers/chat-api/migrations",
-  "observability": { "enabled": false },
+
+  "observability": {
+    "enabled": false
+  },
+
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "amir-nazi-chat-db",
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID"
+      "database_name": "amir-nazi-db",
+      "database_id": "7ad2bcb4-2d0f-4363-b007-b8c9c93b841f",
+      "migrations_dir": "workers/chat-api/migrations"
     }
   ],
-  "r2_buckets": [
-    {
-      "binding": "MEDIA_BUCKET",
-      "bucket_name": "amir-nazi-private-media"
-    }
-  ],
+
   "durable_objects": {
     "bindings": [
       {
@@ -26,17 +25,16 @@
       }
     ]
   },
+
   "migrations": [
     {
       "tag": "v1",
       "new_sqlite_classes": ["ChatRoom"]
     }
   ],
-  "triggers": {
-    "crons": ["17 3 * * *"]
-  },
+
   "vars": {
-    "ALLOWED_ORIGIN": "https://YOUR_VERCEL_OR_CUSTOM_DOMAIN",
+    "ALLOWED_ORIGIN": "https://an-web-xi.vercel.app",
     "COOKIE_SAME_SITE": "None"
   }
 }
