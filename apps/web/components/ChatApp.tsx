@@ -59,9 +59,14 @@ export default function ChatApp() {
   const upsert = useCallback((incoming: ChatMessage[]) => {
     setMessages((current) => {
       const map = new Map(current.map((m) => [m.id, m]));
+      const optimisticByClientId = new Map(
+        current
+          .filter((m) => m.id.startsWith('local:'))
+          .map((m) => [m.clientMessageId, m.id]),
+      );
       for (const message of incoming) {
-        const optimistic = current.find((m) => m.clientMessageId === message.clientMessageId && m.id.startsWith('local:'));
-        if (optimistic) map.delete(optimistic.id);
+        const optimisticId = optimisticByClientId.get(message.clientMessageId);
+        if (optimisticId) map.delete(optimisticId);
         map.set(message.id, { ...map.get(message.id), ...message });
       }
       return [...map.values()].sort((a, b) => a.createdAt - b.createdAt || a.id.localeCompare(b.id));
@@ -326,14 +331,16 @@ export default function ChatApp() {
 
       {searchOpen && <aside className="search-panel"><div className="search-head"><input autoFocus placeholder="جست‌وجو در پیام‌ها…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} /><button onClick={() => setSearchOpen(false)}>بستن</button></div><div className="search-results">{searchQuery.length >= 2 && searchResults.length === 0 && <p className="muted">نتیجه‌ای پیدا نشد.</p>}{searchResults.map((m) => <button key={m.id} onClick={() => { upsert([m]); setSearchOpen(false); requestAnimationFrame(() => document.querySelector(`[data-message-id="${m.id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })); }}><strong>{m.senderName}</strong><span>{m.text || (m.messageType === 'image' ? 'تصویر' : 'ویدیو')}</span></button>)}</div></aside>}
 
-      {fatal && <div className="error-banner"><span>{fatal}</span><button onClick={() => setFatal('')}>×</button></div>}
-      {connection === 'offline' && <div className="offline-banner">اتصال اینترنت قطع است؛ پیش‌نویس شما حفظ می‌شود.</div>}
+      <div className="status-stack" aria-live="polite">
+        {fatal && <div className="error-banner"><span>{fatal}</span><button onClick={() => setFatal('')}>×</button></div>}
+        {connection === 'offline' && <div className="offline-banner">اتصال اینترنت قطع است؛ پیش‌نویس شما حفظ می‌شود.</div>}
+      </div>
 
       <div className="messages-scroll" ref={scrollRef} onScroll={onScroll}>
         <div className="messages-inner">
           {hasMoreBefore && <button className="older-button" onClick={loadOlder} disabled={loadingOlder}>{loadingOlder ? 'در حال دریافت…' : 'نمایش پیام‌های قدیمی‌تر'}</button>}
           {!messages.length && <div className="empty-chat"><div>♡</div><h2>گفت‌وگو هنوز خالی است</h2><p>اولین پیام را بنویسید.</p></div>}
-          {grouped.map(({ message, showDate }) => <div key={message.id}>{showDate && <div className="date-separator"><span>{dayLabel(message.createdAt)}</span></div>}<MessageBubble message={message} own={message.senderId === session.user.id} onReply={(m) => { setReply(m); setEdit(null); }} onEdit={startEdit} onDelete={remove} onHeart={heart} onRetry={retry} /></div>)}
+          {grouped.map(({ message, showDate }) => <div className="message-item" key={message.id}>{showDate && <div className="date-separator"><span>{dayLabel(message.createdAt)}</span></div>}<MessageBubble message={message} own={message.senderId === session.user.id} onReply={(m) => { setReply(m); setEdit(null); }} onEdit={startEdit} onDelete={remove} onHeart={heart} onRetry={retry} /></div>)}
         </div>
       </div>
 
